@@ -46,11 +46,11 @@ session_start();
 
 
 
-// $con = new mysqli("localhost", "root", "Algo@123", "for_office");
+$con = new mysqli("localhost", "root", "Algo@123", "for_office");
 
-// if ($con->connect_error) {
-//     die("Connection failed: " . $con->connect_error);
-// }
+if ($con->connect_error) {
+    die("Connection failed: " . $con->connect_error);
+}
 
 
 // if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -62,23 +62,22 @@ session_start();
 if (isset($_POST['createBomHead'])) {
 
 
-
-    $created_by = "admin";
-    $currentDateTime = date('Y-m-d H:i:s');
-
+    $created_by = 'admin';
+    $created_date = date('Y-m-d');
+    $updated_by = 'rg1';
+    $updated_date = date('Y-m-d ');
     // $record_no = $_POST['header_id'];
     $department_name = $_POST['department_name'];
    
 
-    $sql = "INSERT INTO for_office`.`requisition_header_level` (`department_name`, `created_by`) 
-                VALUES (?, ?)";
-
+    $sql = "INSERT INTO for_office.requisition_header_level (`department_name`, `created_by`, `created_date`, `updated_by`, `updated_date`) VALUES (?, ?, ?, ?, ?)";
+               
     $stmt = $con->prepare($sql);
     if ($stmt === false) {
         die("Prepare failed: " . $conn->error);
     }
 
-    $stmt->bind_param("ssssssss", $department_name, $user);
+    $stmt->bind_param("sssss", $department_name, $created_by, $created_date, $updated_by, $updated_date);
 
     if ($stmt->execute()) {
 
@@ -116,7 +115,7 @@ if (isset($_POST['bom_creation_form'])) {
     // include('../dbconnection/db.php');
 
     $inputs_data = $_POST['inputsData'];
-    $bom_id = $_POST['bom_id'];
+    $requisition_id = $_POST['requisition_id'];
 
 
 
@@ -146,13 +145,12 @@ if (isset($_POST['bom_creation_form'])) {
 
 
 
-        $stmt = "INSERT INTO for_office`.`requisition_line_level` (`requisition_type`, `so_number`, `item_name`, `item_code`, `quantity`, `user_remarks` , `price` , `date_hand_hover`,`handover_over_by`,`status`,`final_remarks`, `created_by`,`created_date`    )
-                     VALUES (?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?);";
+        $stmt = "INSERT INTO for_office.requisition_line_level (`requisition_id`, `requisition_type`, `so_number`, `item_name`, `item_code`, `quantity` , `user_remarks` , `price`,`created_by`,`created_date`,`date_hand_hover`,`handover_over_by`,`status`,`final_remarks`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
 
         $stmt = $con->prepare($stmt);
 
-        $stmt->bind_param("ssssssssss", $requisition_type, $so_number, $item_name, $item_code, $quantity, $user_remarks, $price, $user, $datetime,$date_hand_hover,$handover_over_by,$status,$final_remarks);
+        $stmt->bind_param("ssssssssssssss", $requisition_id, $requisition_type, $so_number, $item_name, $item_code, $quantity, $user_remarks, $price, $datetime,$user,$date_hand_hover,$handover_over_by,$status,$final_remarks);
 
 
 
